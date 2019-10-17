@@ -49,7 +49,7 @@ private:
             : m_jit(jit),
               m_search(llvm::cantFail(
                            orc::DynamicLibrarySearchGenerator::GetForCurrentProcess(
-                               data_layout))) {}
+                               '\0'))) {}
         orc::SymbolNameSet operator()(orc::JITDylib &jd, const orc::SymbolNameSet &names);
         ~SymbolGenerator();
     private:

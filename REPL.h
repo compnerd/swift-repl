@@ -32,7 +32,6 @@
 #include <swift/Basic/SourceManager.h>
 #include <swift/ClangImporter/ClangImporter.h>
 #include <swift/Frontend/Frontend.h>
-#include <swift/Frontend/ParseableInterfaceModuleLoader.h>
 #include <swift/SIL/SILModule.h>
 
 #include "Config.h"

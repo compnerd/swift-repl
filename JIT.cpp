@@ -26,11 +26,11 @@ llvm::Expected<std::unique_ptr<JIT>> JIT::Create()
     auto machine_builder = orc::JITTargetMachineBuilder::detectHost();
     if(!machine_builder)
         return machine_builder.takeError();
-    
+
     auto data_layout = machine_builder->getDefaultDataLayoutForTarget();
     if(!data_layout)
         return data_layout.takeError();
-    
+
     return std::unique_ptr<JIT>(new JIT(std::move(*machine_builder), std::move(*data_layout)));
 }
 
@@ -86,7 +86,10 @@ orc::SymbolNameSet JIT::SymbolGenerator::operator()(orc::JITDylib &jd, const orc
             non_imps.insert(name);
     }
 
-    orc::SymbolNameSet added = m_search(jd, non_imps);
+    llvm::Expected<orc::SymbolNameSet> added = m_search(jd, non_imps);
+    if (!added)
+      return {};
+
     orc::SymbolMap new_symbols;
 
     for(auto &_imp : imps)
@@ -102,12 +105,12 @@ orc::SymbolNameSet JIT::SymbolGenerator::operator()(orc::JITDylib &jd, const orc
             new_symbols[interned_imp] =
                 llvm::JITEvaluatedSymbol(llvm::pointerToJITTargetAddress(m_imps.back()),
                                         llvm::JITSymbolFlags::Exported);
-            added.insert(interned_imp);
+            added->insert(interned_imp);
         }
     }
     if(!new_symbols.empty())
         cantFail(jd.define(orc::absoluteSymbols(std::move(new_symbols))));
-    return added;
+    return *added;
 }
 
 JIT::SymbolGenerator::~SymbolGenerator()

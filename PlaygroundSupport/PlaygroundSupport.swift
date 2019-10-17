@@ -46,8 +46,6 @@ public final class PlaygroundPage {
                 SetWindowPos(handle, unsafeBitCast(1, to: HWND?.self),
                              rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top,
                              UINT(bitPattern: SWP_NOZORDER));
-                liveView.show()
-                liveView.invalidate();
             }
         }
     }

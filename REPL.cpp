@@ -28,6 +28,8 @@
 
 #include <swift/AST/ASTMangler.h>
 #include <swift/SILOptimizer/PassManager/Passes.h>
+#include <swift/Frontend/ModuleInterfaceLoader.h>
+
 
 void ConfigureFunctionLinkage(swift::SourceFile &src_file, std::unique_ptr<swift::SILModule> &sil_module)
 {
@@ -526,11 +528,11 @@ void REPL::SetupImporters()
     if(loading_mode != swift::ModuleLoadingMode::OnlySerialized)
     {
         std::unique_ptr<swift::ModuleLoader> parseable_module_loader(
-            swift::ParseableInterfaceModuleLoader::create(*m_ast_ctx,
-                                                          module_cache_path,
-                                                          prebuilt_module_cache_path,
-                                                          tracker,
-                                                          loading_mode)
+            swift::ModuleInterfaceLoader::create(*m_ast_ctx,
+                                                 module_cache_path,
+                                                 prebuilt_module_cache_path,
+                                                 tracker,
+                                                 loading_mode)
             );
         if(parseable_module_loader)
             m_ast_ctx->addModuleLoader(std::move(parseable_module_loader));
